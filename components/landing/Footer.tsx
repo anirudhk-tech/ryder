@@ -6,7 +6,7 @@ import { FaInstagram } from "react-icons/fa";
 export default function Footer() {
   return (
     <>
-      <div className="flex items-center text-2xl">
+      <div className="flex items-center text-2xl gap-2 mt-auto">
         <Link
           href="https://www.tiktok.com/@ryder"
           target="_blank"
@@ -14,9 +14,8 @@ export default function Footer() {
         >
           <FaTiktok />
         </Link>
-        <span className="text-[#FFE62E]/40">•</span>
         <Link
-          href="https://www.instagram.com/ryder"
+          href="https://www.instagram.com/0017_ryder/"
           target="_blank"
           aria-label="Instagram"
         >
@@ -24,7 +23,7 @@ export default function Footer() {
         </Link>
       </div>
 
-      <div className="[font-family:var(--font-press)] text-[7px]">
+      <div className="[font-family:var(--font-press)] text-[7px] mt-auto">
         © {new Date().getFullYear()} Ryder - All rights reserved
       </div>
     </>
