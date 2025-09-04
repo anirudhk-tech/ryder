@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Press_Start_2P, Silkscreen } from "next/font/google";
+import { MusicWrapper } from "@/components/wrapper/MusicWrapper";
 
 const press = Press_Start_2P({
   subsets: ["latin"],
@@ -28,7 +29,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${press.variable} ${pixel.variable}`}>{children}</body>
+      <MusicWrapper>
+        <body className={`${press.variable} ${pixel.variable}`}>
+          {children}
+        </body>
+      </MusicWrapper>
     </html>
   );
 }
