@@ -9,15 +9,18 @@ import { StartButton } from "@/components/landing/StartButton";
 import { motion } from "framer-motion";
 import { BookDialog } from "@/components/bookings/BookingDialog";
 import { useUiStore } from "@/lib/store/useUiStore";
+import { useRouter } from "next/navigation";
+import { FloatingIcons } from "@/components/FloatingIcons";
 
 export default function HomePage() {
   const { isLandingStarted, startLanding } = useStartLanding();
   const { openHaircutBooking, openBeardBooking, openHaircutAndBeardBooking } =
     useUiStore();
+  const router = useRouter();
 
   return (
     <main
-      className="bg-[#fdfdfd] max-h-screen gap-6 flex flex-col items-center justify-center"
+      className="bg-[#00000] h-[100vh] gap-6 flex flex-col items-center justify-center"
       role="main"
     >
       {isLandingStarted ? (
@@ -33,15 +36,21 @@ export default function HomePage() {
             <BookDialog />
 
             <ul className="flex flex-col items-center gap-[clamp(8px,2.6vh,16px)] m-0 p-0 list-none">
-              <MenuItem onClick={openHaircutBooking} label="Haircut" />
-              <MenuItem onClick={openBeardBooking} label="Beard" />
+              <MenuItem onClick={openHaircutBooking} label="Haircut" animate />
+              <MenuItem onClick={openBeardBooking} label="Beard" animate />
               <MenuItem
                 onClick={openHaircutAndBeardBooking}
                 label="Haircut + Beard"
+                animate
               />
-              <MenuItem onClick={() => {}} label="Ryder's Work" />
+              <MenuItem
+                onClick={() => router.push("/work")}
+                label="Ryder's Work"
+                animate
+              />
             </ul>
           </motion.div>
+          <FloatingIcons animate />
           <Footer />
         </>
       ) : (

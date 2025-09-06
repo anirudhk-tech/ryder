@@ -13,6 +13,7 @@ export const MusicWrapper = ({
     if (!isLandingStarted) return;
 
     const audio = new Audio("/Website.m4a");
+    audio.loop = true;
     audio.play().catch((err) => {
       console.error("Autoplay blocked:", err);
     });

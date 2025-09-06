@@ -3,13 +3,16 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
+import TypingText from "../TypingText";
 
 export default function MenuItem({
   onClick,
   label,
+  animate = false,
 }: {
   onClick?: () => void;
   label: string;
+  animate?: boolean;
 }) {
   const [hovered, setHovered] = useState(false);
 
@@ -20,7 +23,7 @@ export default function MenuItem({
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setHovered(true)}
       onBlur={() => setHovered(false)}
-      className="flex flex-row"
+      className="flex flex-row cursor-pointer"
     >
       <motion.span
         aria-hidden
@@ -37,7 +40,15 @@ export default function MenuItem({
         ►
       </motion.span>
 
-      <span className="[font-family:var(--font-press)]">{label}</span>
+      {animate ? (
+        <TypingText
+          className="[font-family:var(--font-press)]"
+          text={label}
+          delay={2500}
+        />
+      ) : (
+        <span className="[font-family:var(--font-press)]">{label}</span>
+      )}
     </li>
   );
 }

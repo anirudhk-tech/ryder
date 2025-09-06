@@ -10,7 +10,7 @@ export const StartButton = ({ onClick }: { onClick: () => void }) => {
         width={200}
         height={50}
         priority
-        className="cursor-pointer"
+        className="cursor-pointer rounded-2xl"
       />
     </div>
   );
