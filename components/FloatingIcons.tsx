@@ -26,7 +26,7 @@ export const FloatingIcons = ({ animate = false }: { animate?: boolean }) => (
           target="_blank"
           aria-label="TikTok"
         >
-          <FaTiktok className="text-2xl" />
+          <FaTiktok className="text-2xl text-white" />
         </Link>
       </motion.div>
     ) : (
@@ -35,7 +35,7 @@ export const FloatingIcons = ({ animate = false }: { animate?: boolean }) => (
         target="_blank"
         aria-label="TikTok"
       >
-        <FaTiktok className="text-2xl" />
+        <FaTiktok className="text-2xl text-white" />
       </Link>
     )}
 
@@ -61,7 +61,7 @@ export const FloatingIcons = ({ animate = false }: { animate?: boolean }) => (
           target="_blank"
           aria-label="Instagram"
         >
-          <FaInstagram className="text-2xl" />
+          <FaInstagram className="text-2xl text-white" />
         </Link>
       </motion.div>
     ) : (
@@ -70,7 +70,7 @@ export const FloatingIcons = ({ animate = false }: { animate?: boolean }) => (
         target="_blank"
         aria-label="Instagram"
       >
-        <FaInstagram className="text-2xl" />
+        <FaInstagram className="text-2xl text-white" />
       </Link>
     )}
   </div>

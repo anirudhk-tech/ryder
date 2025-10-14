@@ -2,7 +2,7 @@
 
 export default function Footer() {
   return (
-    <div className="[font-family:var(--font-press)] text-[7px] mt-auto text-center pb-2">
+    <div className="[font-family:var(--font-press)] text-[7px] mt-auto text-center pb-2 text-white">
       © {new Date().getFullYear()} Ryder - All rights reserved
     </div>
   );

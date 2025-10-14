@@ -42,7 +42,7 @@ export default function MenuItem({
 
       {animate ? (
         <TypingText
-          className="[font-family:var(--font-press)]"
+          className="[font-family:var(--font-press)] text-white"
           text={label}
           delay={2500}
         />

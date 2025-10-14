@@ -20,7 +20,7 @@ export default function HomePage() {
 
   return (
     <main
-      className="bg-[#00000] h-[100vh] gap-6 flex flex-col items-center justify-center"
+      className="bg-[url('/background.JPG')] bg-cover bg-center min-h-screen gap-6 flex flex-col items-center justify-center  overflow-x-hidden overflow-y-hidden"
       role="main"
     >
       {isLandingStarted ? (
