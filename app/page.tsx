@@ -36,14 +36,26 @@ export default function HomePage() {
             <BookDialog />
 
             <ul className="flex flex-col items-center gap-[clamp(8px,2.6vh,16px)] m-0 p-0 list-none">
-              <MenuItem onClick={openHaircutBooking} label="Haircut" animate />
-              <MenuItem onClick={openBeardBooking} label="Beard" animate />
               <MenuItem
+                key={1}
+                onClick={openHaircutBooking}
+                label="Haircut"
+                animate
+              />
+              <MenuItem
+                key={2}
+                onClick={openBeardBooking}
+                label="Beard"
+                animate
+              />
+              <MenuItem
+                key={3}
                 onClick={openHaircutAndBeardBooking}
                 label="Haircut + Beard"
                 animate
               />
               <MenuItem
+                key={4}
                 onClick={() => router.push("/work")}
                 label="Ryder's Work"
                 animate

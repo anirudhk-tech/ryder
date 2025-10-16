@@ -14,7 +14,7 @@ export default function RotatingThreeJSModel() {
       0.1,
       1000
     );
-    camera.position.z = 5;
+    camera.position.z = 3;
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(
@@ -91,7 +91,7 @@ export default function RotatingThreeJSModel() {
     const animate = () => {
       reqId = requestAnimationFrame(animate);
       if (pivotRef.current) {
-        pivotRef.current.rotation.y += 0.005;
+        pivotRef.current.rotation.y += 0.003;
       }
       renderer.render(scene, camera);
     };
@@ -112,8 +112,9 @@ export default function RotatingThreeJSModel() {
       style={{
         position: "absolute",
         left: "1vw",
+        bottom: "10vh",
         width: "100vw",
-        height: "70vh",
+        height: "50vh",
       }}
     />
   );

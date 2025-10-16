@@ -27,6 +27,7 @@ export default function MenuItem({
     >
       <motion.span
         aria-hidden
+        style={{ minWidth: "1ch", display: "inline-block" }}
         initial={{ opacity: 0 }}
         animate={
           hovered
