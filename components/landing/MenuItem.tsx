@@ -1,4 +1,3 @@
-// components/MenuItem.tsx
 "use client";
 
 import { motion } from "framer-motion";
@@ -6,11 +5,11 @@ import { useState } from "react";
 import TypingText from "../TypingText";
 
 export default function MenuItem({
-  onClick,
+  onClickAction,
   label,
   animate = false,
 }: {
-  onClick?: () => void;
+  onClickAction?: () => void;
   label: string;
   animate?: boolean;
 }) {
@@ -18,7 +17,7 @@ export default function MenuItem({
 
   return (
     <li
-      onClick={onClick}
+      onClick={onClickAction}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setHovered(true)}
@@ -27,7 +26,7 @@ export default function MenuItem({
     >
       <motion.span
         aria-hidden
-        style={{ minWidth: "1ch", display: "inline-block" }}
+        style={{ minWidth: "1ch", display: "inline-block", color: "white" }}
         initial={{ opacity: 0 }}
         animate={
           hovered
@@ -45,7 +44,7 @@ export default function MenuItem({
         <TypingText
           className="[font-family:var(--font-press)] text-white"
           text={label}
-          delay={2500}
+          delay={1000}
         />
       ) : (
         <span className="[font-family:var(--font-press)]">{label}</span>

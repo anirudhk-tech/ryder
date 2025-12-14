@@ -18,10 +18,12 @@ export const BookDialog = () => {
     isHaircutBookingOpen || isBeardBookingOpen || isHaircutAndBeardBookingOpen;
 
   const getEmbedUrl = () => {
-    if (isHaircutBookingOpen) return "https://cal.com/anirudh-kuppili/30min";
-    if (isBeardBookingOpen) return "https://cal.com/anirudh-kuppili/30min";
+    if (isHaircutBookingOpen)
+      return "https://koalendar.com/e/get-cut-by-ryder?month=2025-12&duration=60&services=UYDCJ&date=2025-12-15";
+    if (isBeardBookingOpen)
+      return "https://koalendar.com/e/get-cut-by-ryder?month=2025-12&duration=30&services=QMNBM&date=2025-12-15";
     if (isHaircutAndBeardBookingOpen)
-      return "https://cal.com/anirudh-kuppili/30min";
+      return "https://koalendar.com/e/get-cut-by-ryder?month=2025-12&duration=80&services=59NAW&date=2025-12-15";
   };
 
   const onClose = () => {
@@ -38,7 +40,7 @@ export const BookDialog = () => {
       {iframeLoaded ? (
         <Button
           onClick={onClose}
-          className="absolute bg-white text-black top-4 left-4 z-50 cursor-pointer"
+          className="absolute bg-[#445367] text-white top-4 left-4 z-50 rounded-sm cursor-pointer"
           size={"sm"}
         >
           Close

@@ -1,4 +1,3 @@
-// app/page.tsx
 "use client";
 
 import Hero from "@/components/landing/Hero";
@@ -20,7 +19,7 @@ export default function HomePage() {
 
   return (
     <main
-      className="bg-[url('/background.JPG')] bg-cover bg-center min-h-screen gap-6 flex flex-col items-center justify-center  overflow-x-hidden overflow-y-hidden"
+      className="bg-black bg-cover bg-center min-h-screen gap-6 flex flex-col items-center justify-center  overflow-x-hidden overflow-y-hidden"
       role="main"
     >
       {isLandingStarted ? (
@@ -38,25 +37,25 @@ export default function HomePage() {
             <ul className="flex flex-col items-center gap-[clamp(8px,2.6vh,16px)] m-0 p-0 list-none">
               <MenuItem
                 key={1}
-                onClick={openHaircutBooking}
+                onClickAction={openHaircutBooking}
                 label="Haircut"
                 animate
               />
               <MenuItem
                 key={2}
-                onClick={openBeardBooking}
+                onClickAction={openBeardBooking}
                 label="Beard"
                 animate
               />
               <MenuItem
                 key={3}
-                onClick={openHaircutAndBeardBooking}
+                onClickAction={openHaircutAndBeardBooking}
                 label="Haircut + Beard"
                 animate
               />
               <MenuItem
                 key={4}
-                onClick={() => router.push("/work")}
+                onClickAction={() => router.push("/work")}
                 label="Ryder's Work"
                 animate
               />
