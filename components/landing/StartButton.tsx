@@ -5,7 +5,7 @@ export const StartButton = ({ onClick }: { onClick: () => void }) => {
     <div className="flex items-center justify-center h-screen w-screen">
       <Image
         onClick={onClick}
-        src="/StartButton.png"
+        src="/assets/StartButton.png"
         alt="Start Button"
         width={200}
         height={50}

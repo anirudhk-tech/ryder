@@ -8,16 +8,26 @@ export const MusicWrapper = ({
 }: {
   children: React.ReactElement;
 }) => {
-  const { isLandingStarted } = useUiStore();
+  const { audioVersion, setAudioVersion, isLandingStarted } = useUiStore();
+
   useEffect(() => {
     if (!isLandingStarted) return;
 
-    const audio = new Audio("/Website.m4a");
+    const mountAudio = async () => {
+      const res = await fetch("api/assets/audio");
+      const data = await res.json();
+
+      setAudioVersion(data.version);
+    };
+
+    mountAudio();
+
+    const audio = new Audio(`assets/Website.m4a?v=${audioVersion}`);
     audio.loop = true;
     audio.play().catch((err) => {
       console.error("Autoplay blocked:", err);
     });
-  }, [isLandingStarted]);
+  }, [isLandingStarted, setAudioVersion, audioVersion]);
 
   return <>{children}</>;
 };

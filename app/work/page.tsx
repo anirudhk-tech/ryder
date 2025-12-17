@@ -11,6 +11,7 @@ import IMG_5463 from "@/public/showcase/IMG_5463.jpeg";
 import IMG_5464 from "@/public/showcase/IMG_5464.jpeg";
 import IMG_5465 from "@/public/showcase/IMG_5465.jpeg";
 import IMG_5466 from "@/public/showcase/IMG_5466.jpeg";
+
 import TypingText from "@/components/TypingText";
 import Footer from "@/components/landing/Footer";
 import { Navbar } from "@/components/Navbar";
