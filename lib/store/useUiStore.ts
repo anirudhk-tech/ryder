@@ -17,6 +17,8 @@ type UiState = {
   setLogoPictureVersion: (version: number) => void;
   audioVersion: number;
   setAudioVersion: (version: number) => void;
+  reviewsVersion: number;
+  setReviewsVersion: (version: number) => void;
 };
 
 export const useUiStore = create<UiState>((set) => ({
@@ -38,4 +40,6 @@ export const useUiStore = create<UiState>((set) => ({
     set({ logoPictureVersion: version }),
   audioVersion: 1,
   setAudioVersion: (version: number) => set({ audioVersion: version }),
+  reviewsVersion: 1,
+  setReviewsVersion: (version: number) => set({ reviewsVersion: version }),
 }));
