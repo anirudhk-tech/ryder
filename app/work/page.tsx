@@ -77,14 +77,14 @@ export default function WorkShowcase() {
                   whileHover={{ scale: 1.015, rotate: 0.15 }}
                   className="group relative rounded-2xl"
                 >
-                  <div className="relative w-full max-h-[600px] mx-auto">
+                  <div className="relative w-full max-h-150 mx-auto">
                     <Image
                       src={src}
                       alt={`Work ${i + 1}`}
                       width={800}
                       height={1200}
                       className="
-                      h-auto w-full max-h-[600px]
+                      h-auto w-full max-h-150
                       object-contain
                       drop-shadow-[0_0_0_rgba(0,0,0,0)]
                       hover:drop-shadow-[0_0_18px_rgba(255,255,0,0.8)]
