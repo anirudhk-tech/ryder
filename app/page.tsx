@@ -59,6 +59,12 @@ export default function HomePage() {
                 label="Ryder's Work"
                 animate
               />
+              <MenuItem
+                key={5}
+                onClickAction={() => router.push("/reviews")}
+                label="Reviews"
+                animate
+              />
             </ul>
           </motion.div>
           <FloatingIcons animate />
