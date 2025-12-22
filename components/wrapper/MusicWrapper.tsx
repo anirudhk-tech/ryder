@@ -27,7 +27,7 @@ export const MusicWrapper = ({
     audio.play().catch((err) => {
       console.error("Autoplay blocked:", err);
     });
-  }, [isLandingStarted, setAudioVersion, audioVersion]);
+  }, [isLandingStarted]);
 
   return <>{children}</>;
 };
