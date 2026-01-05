@@ -19,7 +19,7 @@ export default function HomePage() {
 
   return (
     <main
-      className="bg-black bg-cover bg-center min-h-screen gap-6 flex flex-col items-center justify-center  overflow-x-hidden overflow-y-hidden"
+      className="bg-black bg-cover bg-center min-h-[100dvh] gap-6 flex flex-col items-center justify-center overflow-x-hidden overflow-y-hidden"
       role="main"
     >
       {isLandingStarted ? (

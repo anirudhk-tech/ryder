@@ -28,12 +28,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <MusicWrapper>
-        <body className={`${press.variable} ${pixel.variable}`}>
-          {children}
-        </body>
-      </MusicWrapper>
+    <html lang="en" className="dark">
+      <body className={`${press.variable} ${pixel.variable}`}>
+        <MusicWrapper>{children}</MusicWrapper>
+      </body>
     </html>
   );
 }
