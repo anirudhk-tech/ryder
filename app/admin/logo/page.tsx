@@ -10,7 +10,7 @@ export default function BackgroundPage() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const { setLogoPictureVersion } = useUiStore();
+  const { setLogoPicture } = useUiStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +38,7 @@ export default function BackgroundPage() {
 
       const data = await res.json();
 
-      setLogoPictureVersion(data.version);
+      setLogoPicture(data.version, data.url);
       setMessage("Logo updated!");
     } catch (err) {
       setMessage("Something went wrong.");

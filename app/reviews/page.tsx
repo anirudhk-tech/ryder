@@ -10,7 +10,15 @@ import { Navbar } from "@/components/Navbar";
 export default function Reviews() {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { reviewsVersion } = useUiStore();
+  const [submitting, setSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+  const { reviewsVersion, setReviewsVersion } = useUiStore();
+
+  // Form state
+  const [name, setName] = useState("");
+  const [label, setLabel] = useState("");
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState("");
 
   useEffect(() => {
     fetchReviews();
@@ -18,13 +26,60 @@ export default function Reviews() {
 
   const fetchReviews = async () => {
     try {
-      const res = await fetch("/api/assets/reviews");
+      const res = await fetch("/api/assets/reviews", { cache: "no-store" });
       const data = await res.json();
       setReviews(data.reviews || []);
     } catch (err) {
       console.error("Failed to fetch reviews:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!name.trim() || !comment.trim()) {
+      setSubmitMessage("Please fill in your name and review.");
+      return;
+    }
+
+    setSubmitting(true);
+    setSubmitMessage(null);
+
+    try {
+      const res = await fetch("/api/assets/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim(),
+          label: label.trim(),
+          rating,
+          comment: comment.trim(),
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to submit review");
+      }
+
+      const data = await res.json();
+      setReviewsVersion(data.version);
+      
+      // Clear form
+      setName("");
+      setLabel("");
+      setRating(5);
+      setComment("");
+      setSubmitMessage("Thanks for your review! 🎉");
+      
+      // Refresh reviews
+      fetchReviews();
+    } catch (err) {
+      console.error("Failed to submit review:", err);
+      setSubmitMessage("Failed to submit review. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -48,75 +103,178 @@ export default function Reviews() {
           </p>
         </header>
 
+        {/* Side-by-side layout: Reviews on left, Form on right */}
         <main className="mx-auto max-w-7xl px-4 pb-24">
-          {loading ? (
-            <div className="text-center py-24 text-white/50">
-              Loading reviews...
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Reviews List - Left Side */}
+            <div className="flex-1 order-2 lg:order-1">
+              {loading ? (
+                <div className="text-center py-24 text-white/50">
+                  Loading reviews...
+                </div>
+              ) : reviews.length === 0 ? (
+                <div className="text-center py-24 text-white/50">
+                  No reviews yet. Be the first to leave one!
+                </div>
+              ) : (
+                <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  {reviews.map((review: any, i: number) => (
+                    <li key={review.id} className="relative">
+                      <motion.div
+                        initial={{ opacity: 0, y: 8, scale: 0.985 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{ duration: 0.2, delay: i * 0.05 }}
+                        className="relative rounded-2xl bg-black/30 border border-white/20 p-6 h-full"
+                      >
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="flex gap-0.5">
+                            {Array.from({ length: 5 }).map((_, starIndex) => (
+                              <span
+                                key={starIndex}
+                                className={`text-base ${
+                                  starIndex < review.rating
+                                    ? "text-yellow-400 drop-shadow-[0_0_4px_rgba(255,215,0,0.8)]"
+                                    : "text-white/40"
+                                }`}
+                              >
+                                ★
+                              </span>
+                            ))}
+                          </div>
+                          <span className="text-sm font-medium text-white/80">
+                            {review.name || "Anonymous"}
+                          </span>
+                        </div>
+
+                        {review.label && (
+                          <div className="mb-3">
+                            <span className="inline-block bg-linear-to-r from-yellow-400/20 to-orange-400/20 border border-yellow-400/30 px-2 py-0.5 text-xs rounded-sm font-bold uppercase tracking-wide text-yellow-300">
+                              {review.label}
+                            </span>
+                          </div>
+                        )}
+
+                        {review.comment && (
+                          <p className="text-white/90 leading-relaxed text-base mb-3">
+                            "{review.comment}"
+                          </p>
+                        )}
+
+                        <div className="text-xs text-white/50">
+                          {new Date(review.createdAt).toLocaleDateString()}
+                        </div>
+                      </motion.div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-          ) : reviews.length === 0 ? (
-            <div className="text-center py-24 text-white/50">
-              No reviews yet. Check back soon!
-            </div>
-          ) : (
-            <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {reviews.map((review: any, i: number) => (
-                <li key={review.id} className="relative">
-                  <motion.div
-                    initial={{ opacity: 0, y: 8, scale: 0.985 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ duration: 0.2, delay: i * 0.05 }}
-                    whileHover={{ scale: 1.02, y: -4 }}
-                    className="group relative rounded-2xl bg-black/30 border border-white/20 p-8 h-full"
-                  >
-                    <div className="flex items-center gap-3 mb-4">
+
+            {/* Add Review Form - Right Side (sticky) */}
+            <div className="w-full lg:w-96 order-1 lg:order-2">
+              <div className="lg:sticky lg:top-24">
+                <motion.form
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  onSubmit={handleSubmit}
+                  className="rounded-2xl bg-black/40 border border-white/20 p-6"
+                >
+                  <h2 className="text-xl font-bold mb-5 text-yellow-300">
+                    Leave a Review
+                  </h2>
+
+                  <div className="grid gap-4">
+                    {/* Name */}
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-1.5">
+                        Your Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="John Doe"
+                        className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-2.5 text-white placeholder:text-white/30 focus:outline-none focus:border-yellow-400/50 focus:ring-1 focus:ring-yellow-400/30 transition-colors"
+                      />
+                    </div>
+
+                    {/* Label */}
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-1.5">
+                        Title / Occupation
+                      </label>
+                      <input
+                        type="text"
+                        value={label}
+                        onChange={(e) => setLabel(e.target.value)}
+                        placeholder="e.g. Student, Engineer"
+                        className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-2.5 text-white placeholder:text-white/30 focus:outline-none focus:border-yellow-400/50 focus:ring-1 focus:ring-yellow-400/30 transition-colors"
+                      />
+                    </div>
+
+                    {/* Rating */}
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-1.5">
+                        Rating *
+                      </label>
                       <div className="flex gap-1">
-                        {Array.from({ length: 5 }).map((_, starIndex) => (
-                          <span
-                            key={starIndex}
-                            className={`text-lg ${
-                              starIndex < review.rating
-                                ? "text-yellow-400 drop-shadow-[0_0_4px_rgba(255,215,0,0.8)]"
-                                : "text-white/40"
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            type="button"
+                            onClick={() => setRating(star)}
+                            className={`text-2xl transition-all hover:scale-110 ${
+                              star <= rating
+                                ? "text-yellow-400 drop-shadow-[0_0_8px_rgba(255,215,0,0.8)]"
+                                : "text-white/30 hover:text-white/50"
                             }`}
                           >
                             ★
-                          </span>
+                          </button>
                         ))}
                       </div>
-                      <span className="text-sm font-medium text-white/80">
-                        {review.name || "Anonymous"}
-                      </span>
                     </div>
 
-                    {review.label && (
-                      <div className="mb-4">
-                        <span className="inline-block bg-linear-to-r from-yellow-400/20 to-orange-400/20 border border-yellow-400/30 px-3 py-1 text-xs rounded-sm font-bold uppercase tracking-wide text-yellow-300">
-                          {review.label}
-                        </span>
-                      </div>
-                    )}
+                    {/* Comment */}
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-1.5">
+                        Your Review *
+                      </label>
+                      <textarea
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder="Share your experience..."
+                        rows={4}
+                        className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-2.5 text-white placeholder:text-white/30 focus:outline-none focus:border-yellow-400/50 focus:ring-1 focus:ring-yellow-400/30 transition-colors resize-none"
+                      />
+                    </div>
 
-                    {review.comment && (
-                      <p className="text-white/90 leading-relaxed text-lg mb-4 line-clamp-4 group-hover:line-clamp-none transition-all duration-300">
-                        "{review.comment}"
+                    {/* Submit */}
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-black font-bold py-2.5 px-6 rounded-lg hover:from-yellow-400 hover:to-orange-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {submitting ? "Submitting..." : "Submit Review"}
+                    </button>
+
+                    {submitMessage && (
+                      <p
+                        className={`text-center text-sm ${
+                          submitMessage.includes("Thanks")
+                            ? "text-green-400"
+                            : "text-red-400"
+                        }`}
+                      >
+                        {submitMessage}
                       </p>
                     )}
-
-                    <div className="text-xs text-white/60 mt-auto flex justify-between items-center">
-                      <span>
-                        {new Date(review.createdAt).toLocaleDateString()}
-                      </span>
-                      {review.productId && (
-                        <span className="font-mono bg-white/10 px-2 py-1 rounded">
-                          {review.productId}
-                        </span>
-                      )}
-                    </div>
-                  </motion.div>
-                </li>
-              ))}
-            </ul>
-          )}
+                  </div>
+                </motion.form>
+              </div>
+            </div>
+          </div>
         </main>
         <Footer />
       </div>

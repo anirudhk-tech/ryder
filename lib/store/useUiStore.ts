@@ -14,9 +14,11 @@ type UiState = {
   closeHaircutAndBeardBooking: () => void;
 
   logoPictureVersion: number;
-  setLogoPictureVersion: (version: number) => void;
+  logoUrl: string | null;
+  setLogoPicture: (version: number, url: string | null) => void;
   audioVersion: number;
-  setAudioVersion: (version: number) => void;
+  audioUrl: string | null;
+  setAudio: (version: number, url: string | null) => void;
   reviewsVersion: number;
   setReviewsVersion: (version: number) => void;
 };
@@ -36,10 +38,13 @@ export const useUiStore = create<UiState>((set) => ({
     set({ isHaircutAndBeardBookingOpen: false }),
 
   logoPictureVersion: 1,
-  setLogoPictureVersion: (version: number) =>
-    set({ logoPictureVersion: version }),
+  logoUrl: null,
+  setLogoPicture: (version: number, url: string | null) =>
+    set({ logoPictureVersion: version, logoUrl: url }),
   audioVersion: 1,
-  setAudioVersion: (version: number) => set({ audioVersion: version }),
+  audioUrl: null,
+  setAudio: (version: number, url: string | null) =>
+    set({ audioVersion: version, audioUrl: url }),
   reviewsVersion: 1,
   setReviewsVersion: (version: number) => set({ reviewsVersion: version }),
 }));

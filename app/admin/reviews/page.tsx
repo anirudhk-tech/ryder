@@ -139,7 +139,7 @@ export default function AdminReviewsPage() {
             type="button"
             onClick={() => router.push("/admin/reviews/edit")}
             variant="outline"
-            className="h-12 w-full bg-white text-black font-bold rounded-sm text-lg hover:bg-white hover:-translate-y-0.5 transition-transform"
+            className="h-12 w-full bg-white font-bold rounded-sm text-lg hover:bg-white hover:-translate-y-0.5 transition-transform"
           >
             Edit Reviews
           </Button>
@@ -148,7 +148,7 @@ export default function AdminReviewsPage() {
             type="button"
             onClick={() => router.push("/admin")}
             variant="outline"
-            className="h-10 w-full border border-white bg-black text-white rounded-sm text-sm hover:bg-white hover:text-black transition-colors"
+            className="h-10 w-full border border-white bg-black text-white rounded-sm text-sm hover:bg-white transition-colors"
           >
             ← Back to Dashboard
           </Button>

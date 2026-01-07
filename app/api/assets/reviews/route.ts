@@ -1,7 +1,54 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFile, writeFile } from "fs/promises";
-import path from "path";
-import { revalidatePath } from "next/cache";
+import { put, list, del } from "@vercel/blob";
+
+export const dynamic = "force-dynamic";
+
+const CONFIG_PREFIX = "config/app-config";
+
+async function getConfig() {
+  try {
+    const { blobs } = await list({ prefix: CONFIG_PREFIX });
+    
+    if (blobs.length === 0) {
+      return { audioVersion: 0, logoPictureVersion: 0, reviewsVersion: 0, reviews: [] };
+    }
+    
+    const sortedBlobs = blobs.sort((a, b) => 
+      new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
+    );
+    const latestConfig = sortedBlobs[0];
+    
+    const res = await fetch(latestConfig.url, { cache: "no-store" });
+    
+    if (!res.ok) {
+      return { audioVersion: 0, logoPictureVersion: 0, reviewsVersion: 0, reviews: [] };
+    }
+    
+    return await res.json();
+  } catch {
+    return { audioVersion: 0, logoPictureVersion: 0, reviewsVersion: 0, reviews: [] };
+  }
+}
+
+async function saveConfig(config: Record<string, unknown>) {
+  const { url } = await put(CONFIG_PREFIX + ".json", JSON.stringify(config, null, 2), {
+    access: "public",
+    contentType: "application/json",
+    addRandomSuffix: true,
+  });
+  
+  try {
+    const { blobs } = await list({ prefix: CONFIG_PREFIX });
+    const oldBlobs = blobs.filter(b => b.url !== url);
+    for (const blob of oldBlobs) {
+      await del(blob.url);
+    }
+  } catch {
+    // Cleanup failed, non-fatal
+  }
+  
+  return url;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,13 +58,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
     }
 
-    const configPath = path.join(process.cwd(), "config.json");
-
-    const oldConfig = JSON.parse(await readFile(configPath, "utf8"));
-
-    const reviews = oldConfig.reviews || [];
-
-    const version = oldConfig.reviewsVersion || 0;
+    const config = await getConfig();
+    const reviews = config.reviews || [];
+    const version = config.reviewsVersion || 0;
     const newVersion = version + 1;
 
     const newReview = {
@@ -32,20 +75,19 @@ export async function POST(req: NextRequest) {
     reviews.push(newReview);
 
     const newConfig = {
-      ...oldConfig,
+      ...config,
       reviews,
       reviewsVersion: newVersion,
     };
 
-    await writeFile(configPath, JSON.stringify(newConfig, null, 2));
+    await saveConfig(newConfig);
 
     return NextResponse.json({
       ok: true,
       version: newVersion,
       reviewId: newReview.id,
     });
-  } catch (err) {
-    console.error(err);
+  } catch {
     return NextResponse.json(
       { error: "Failed to add review" },
       { status: 500 },
@@ -64,27 +106,20 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    const configPath = path.join(process.cwd(), "config.json");
-    const config = JSON.parse(await readFile(configPath, "utf8"));
-
+    const config = await getConfig();
     const oldReviews = config.reviews || [];
     const oldVersion = config.reviewsVersion || 0;
 
-    config.reviews = oldReviews.filter((review: any) => review.id !== reviewId);
+    config.reviews = oldReviews.filter((review: { id: string }) => review.id !== reviewId);
     config.reviewsVersion = oldVersion + 1;
 
-    await writeFile(configPath, JSON.stringify(config, null, 2));
-
-    revalidatePath("/", "layout");
-    revalidatePath("/", "page");
-    revalidatePath("/reviews");
+    await saveConfig(config);
 
     return NextResponse.json({
       ok: true,
       version: config.reviewsVersion,
     });
-  } catch (err) {
-    console.error(err);
+  } catch {
     return NextResponse.json(
       { error: "Failed to delete review" },
       { status: 500 },
@@ -93,18 +128,13 @@ export async function DELETE(req: NextRequest) {
 }
 
 export async function GET() {
-  const configPath = path.join(process.cwd(), "config.json");
-
   try {
-    const config = JSON.parse(await readFile(configPath, "utf8"));
-    const version = config.reviewsVersion || 0;
-
-    revalidatePath("/", "layout");
-    revalidatePath("/", "page");
-    revalidatePath("/reviews");
-
-    return NextResponse.json({ version, reviews: config.reviews });
-  } catch (err) {
-    return NextResponse.json({ version: 0 });
+    const config = await getConfig();
+    return NextResponse.json({
+      version: config.reviewsVersion || 0,
+      reviews: config.reviews || [],
+    });
+  } catch {
+    return NextResponse.json({ version: 0, reviews: [] });
   }
 }

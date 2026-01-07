@@ -5,16 +5,21 @@ import Image from "next/image";
 import { useEffect } from "react";
 
 export default function Hero() {
-  const { logoPictureVersion, setLogoPictureVersion } = useUiStore();
+  const { logoUrl, logoPictureVersion, setLogoPicture } = useUiStore();
 
   useEffect(() => {
-    const mountLogo = async () => {
-      const res = await fetch("/api/assets/logo");
+    const fetchLogo = async () => {
+      const res = await fetch("/api/assets/logo", { cache: "no-store" });
       const data = await res.json();
-      setLogoPictureVersion(data.version);
+      setLogoPicture(data.version, data.url);
     };
-    mountLogo();
-  }, [setLogoPictureVersion]);
+    fetchLogo();
+  }, [setLogoPicture]);
+
+  // Use blob URL if available, fallback to local file
+  // ?v=version busts browser cache when logo changes
+  const baseUrl = logoUrl || "/assets/logo.png";
+  const imageSrc = `${baseUrl}?v=${logoPictureVersion}`;
 
   return (
     <div className="relative grid place-items-center">
@@ -22,7 +27,7 @@ export default function Hero() {
       {/* Spacer to reserve space */}
       {/*<RotatingThreeJSModel />*/}
       <Image
-        src={`/assets/logo.png?v=${logoPictureVersion}`}
+        src={imageSrc}
         alt="Logo Image"
         layout="fill"
         objectFit="cover"

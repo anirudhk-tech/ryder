@@ -10,7 +10,7 @@ export default function AudioPage() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const { setAudioVersion } = useUiStore();
+  const { setAudio } = useUiStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,9 +36,9 @@ export default function AudioPage() {
         return;
       }
 
-      const data = await res.json(); // { version: number }
+      const data = await res.json();
 
-      setAudioVersion(data.version);
+      setAudio(data.version, data.url);
       setMessage("Audio updated!");
     } catch (err) {
       setMessage("Something went wrong.");
