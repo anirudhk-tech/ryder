@@ -6,7 +6,7 @@ import { useEffect } from "react";
 export const MusicWrapper = ({
   children,
 }: {
-  children: React.ReactElement;
+  children: React.ReactNode;
 }) => {
   const { setAudio, isLandingStarted } = useUiStore();
 
@@ -18,8 +18,6 @@ export const MusicWrapper = ({
       const data = await res.json();
       setAudio(data.version, data.url);
 
-      // Use blob URL if available, fallback to local file
-      // ?v=version busts browser cache when audio changes
       const baseUrl = data.url || "/assets/Website.m4a";
       const audioSrc = `${baseUrl}?v=${data.version}`;
       const audio = new Audio(audioSrc);
