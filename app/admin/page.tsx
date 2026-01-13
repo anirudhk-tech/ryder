@@ -54,6 +54,12 @@ export default function AdminPage() {
           🎨 Background
         </Button>
         <Button
+          onClick={() => router.push("/admin/showcase")}
+          className="block h-20 w-full bg-white text-black font-bold rounded-sm text-xl transition-all hover:-translate-y-1 hover:bg-white"
+        >
+          📸 Showcase
+        </Button>
+        <Button
           onClick={() => router.push("/admin/reviews")}
           className="block h-20 w-full bg-white text-black font-bold rounded-sm text-xl transition-all hover:-translate-y-1 hover:bg-white"
         >
@@ -63,7 +69,7 @@ export default function AdminPage() {
           type="button"
           onClick={() => router.push("/")}
           variant="outline"
-          className="h-10 w-full border border-white bg-black text-white rounded-sm text-sm hover:bg-white hover:text-black transition-colors"
+          className="h-10 w-full border border-white bg-black text-white rounded-sm text-sm transition-colors"
         >
           ← Back to Website
         </Button>

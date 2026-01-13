@@ -7,6 +7,12 @@ export type BackgroundConfig = {
   value: string; // hex color for 'color', URL for 'image'/'video'
 };
 
+export type ShowcaseImage = {
+  id: string;
+  url: string;
+  uploadedAt: string;
+};
+
 type UiState = {
   isLandingStarted: boolean;
   isHaircutBookingOpen: boolean;
@@ -32,6 +38,9 @@ type UiState = {
   backgroundVersion: number;
   background: BackgroundConfig;
   setBackground: (version: number, config: BackgroundConfig) => void;
+
+  showcaseImages: ShowcaseImage[];
+  setShowcaseImages: (images: ShowcaseImage[]) => void;
 };
 
 const DEFAULT_BACKGROUND: BackgroundConfig = {
@@ -68,4 +77,7 @@ export const useUiStore = create<UiState>((set) => ({
   background: DEFAULT_BACKGROUND,
   setBackground: (version: number, config: BackgroundConfig) =>
     set({ backgroundVersion: version, background: config }),
+
+  showcaseImages: [],
+  setShowcaseImages: (images: ShowcaseImage[]) => set({ showcaseImages: images }),
 }));
