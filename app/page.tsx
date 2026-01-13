@@ -10,6 +10,7 @@ import { BookDialog } from "@/components/bookings/BookingDialog";
 import { useUiStore } from "@/lib/store/useUiStore";
 import { useRouter } from "next/navigation";
 import { FloatingIcons } from "@/components/FloatingIcons";
+import { DynamicBackground } from "@/components/landing/DynamicBackground";
 
 export default function HomePage() {
   const { isLandingStarted, startLanding } = useStartLanding();
@@ -19,16 +20,17 @@ export default function HomePage() {
 
   return (
     <main
-      className="bg-black bg-cover bg-center min-h-[100dvh] gap-6 flex flex-col items-center justify-center overflow-x-hidden overflow-y-hidden"
+      className="relative min-h-[100dvh] gap-6 flex flex-col items-center justify-center overflow-x-hidden overflow-y-hidden"
       role="main"
     >
+      <DynamicBackground />
       {isLandingStarted ? (
         <>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.5, ease: "easeOut" }}
-            className="flex flex-col gap-6 items-center px-[clamp(10px,3vw,28px)] text-center"
+            className="relative z-10 flex flex-col gap-6 items-center px-[clamp(10px,3vw,28px)] text-center"
           >
             <Hero />
 
@@ -67,11 +69,17 @@ export default function HomePage() {
               />
             </ul>
           </motion.div>
-          <FloatingIcons animate />
-          <Footer />
+          <div className="relative z-10">
+            <FloatingIcons animate />
+          </div>
+          <div className="relative z-10">
+            <Footer />
+          </div>
         </>
       ) : (
-        <StartButton onClick={startLanding} />
+        <div className="relative z-10">
+          <StartButton onClick={startLanding} />
+        </div>
       )}
     </main>
   );

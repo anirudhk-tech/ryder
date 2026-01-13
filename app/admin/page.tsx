@@ -48,6 +48,12 @@ export default function AdminPage() {
           🖼️ Logo
         </Button>
         <Button
+          onClick={() => router.push("/admin/background")}
+          className="block h-20 w-full bg-white text-black font-bold rounded-sm text-xl transition-all hover:-translate-y-1 hover:bg-white"
+        >
+          🎨 Background
+        </Button>
+        <Button
           onClick={() => router.push("/admin/reviews")}
           className="block h-20 w-full bg-white text-black font-bold rounded-sm text-xl transition-all hover:-translate-y-1 hover:bg-white"
         >

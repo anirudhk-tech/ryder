@@ -1,5 +1,12 @@
 import { create } from "zustand";
 
+export type BackgroundType = "color" | "image" | "video";
+
+export type BackgroundConfig = {
+  type: BackgroundType;
+  value: string; // hex color for 'color', URL for 'image'/'video'
+};
+
 type UiState = {
   isLandingStarted: boolean;
   isHaircutBookingOpen: boolean;
@@ -21,6 +28,15 @@ type UiState = {
   setAudio: (version: number, url: string | null) => void;
   reviewsVersion: number;
   setReviewsVersion: (version: number) => void;
+
+  backgroundVersion: number;
+  background: BackgroundConfig;
+  setBackground: (version: number, config: BackgroundConfig) => void;
+};
+
+const DEFAULT_BACKGROUND: BackgroundConfig = {
+  type: "color",
+  value: "#000000",
 };
 
 export const useUiStore = create<UiState>((set) => ({
@@ -47,4 +63,9 @@ export const useUiStore = create<UiState>((set) => ({
     set({ audioVersion: version, audioUrl: url }),
   reviewsVersion: 1,
   setReviewsVersion: (version: number) => set({ reviewsVersion: version }),
+
+  backgroundVersion: 1,
+  background: DEFAULT_BACKGROUND,
+  setBackground: (version: number, config: BackgroundConfig) =>
+    set({ backgroundVersion: version, background: config }),
 }));
