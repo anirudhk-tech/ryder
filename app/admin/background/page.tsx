@@ -88,11 +88,7 @@ export default function BackgroundPage() {
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => null);
-        setMessage(
-          errorData?.error
-            ? String(errorData.error)
-            : `Failed to update background (HTTP ${res.status}).`
-        );
+        setMessage("Failed to update background.");
         return;
       }
 
