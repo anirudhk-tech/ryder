@@ -36,7 +36,7 @@ export const BookDialog = () => {
   if (!isOpen) return null;
 
   return (
-    <motion.div className="absolute w-full h-screen z-10000">
+    <motion.div className="fixed inset-0 w-full h-[100dvh] z-[10000]">
       {iframeLoaded ? (
         <Button
           onClick={onClose}

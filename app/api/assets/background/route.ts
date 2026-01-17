@@ -134,7 +134,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const extension = type === "video" ? "mp4" : "png";
+    const fileName =
+      typeof (file as unknown as { name?: unknown })?.name === "string"
+        ? ((file as unknown as { name: string }).name ?? "")
+        : "";
+
+    let extension = type === "video" ? "mp4" : "png";
+    if (type === "video") {
+      if (file.type === "video/webm" || fileName.toLowerCase().endsWith(".webm")) {
+        extension = "webm";
+      } else if (
+        file.type === "video/quicktime" ||
+        fileName.toLowerCase().endsWith(".mov")
+      ) {
+        extension = "mov";
+      }
+    }
     const { url } = await put(`${BACKGROUND_PREFIX}.${extension}`, file, {
       access: "public",
       contentType: file.type || (type === "video" ? "video/mp4" : "image/png"),
@@ -167,9 +182,12 @@ export async function POST(req: NextRequest) {
       version: newVersion,
       background: newBackground,
     });
-  } catch {
+  } catch (err) {
     return NextResponse.json(
-      { error: "Failed to update background" },
+      {
+        error:
+          err instanceof Error ? err.message : "Failed to update background",
+      },
       { status: 500 }
     );
   }

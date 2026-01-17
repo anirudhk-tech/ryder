@@ -14,16 +14,29 @@ import { DynamicBackground } from "@/components/landing/DynamicBackground";
 
 export default function HomePage() {
   const { isLandingStarted, startLanding } = useStartLanding();
-  const { openHaircutBooking, openBeardBooking, openHaircutAndBeardBooking } =
-    useUiStore();
+  const {
+    openHaircutBooking,
+    openBeardBooking,
+    openHaircutAndBeardBooking,
+    isHaircutBookingOpen,
+    isBeardBookingOpen,
+    isHaircutAndBeardBookingOpen,
+  } = useUiStore();
   const router = useRouter();
+
+  const isBookingOpen =
+    isHaircutBookingOpen || isBeardBookingOpen || isHaircutAndBeardBookingOpen;
 
   return (
     <main
       className="relative min-h-[100dvh] gap-6 flex flex-col items-center justify-center overflow-x-hidden overflow-y-hidden"
       role="main"
     >
-      <DynamicBackground />
+      {isLandingStarted ? (
+        <DynamicBackground />
+      ) : (
+        <div className="absolute inset-0 z-0 bg-black" aria-hidden="true" />
+      )}
       {isLandingStarted ? (
         <>
           <motion.div
@@ -69,12 +82,16 @@ export default function HomePage() {
               />
             </ul>
           </motion.div>
-          <div className="relative z-10">
-            <FloatingIcons animate />
-          </div>
-          <div className="relative z-10">
-            <Footer />
-          </div>
+          {!isBookingOpen ? (
+            <>
+              <div className="relative z-10">
+                <FloatingIcons animate />
+              </div>
+              <div className="relative z-10">
+                <Footer />
+              </div>
+            </>
+          ) : null}
         </>
       ) : (
         <div className="relative z-10">

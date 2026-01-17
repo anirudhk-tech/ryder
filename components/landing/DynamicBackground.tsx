@@ -69,7 +69,7 @@ export function DynamicBackground() {
           playsInline
           className="absolute min-w-full min-h-full w-auto h-auto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 object-cover"
         >
-          <source src={background.value} type="video/mp4" />
+          <source src={background.value} />
         </video>
       </div>
     );

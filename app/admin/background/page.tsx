@@ -87,7 +87,12 @@ export default function BackgroundPage() {
       });
 
       if (!res.ok) {
-        setMessage("Failed to update background.");
+        const errorData = await res.json().catch(() => null);
+        setMessage(
+          errorData?.error
+            ? String(errorData.error)
+            : `Failed to update background (HTTP ${res.status}).`
+        );
         return;
       }
 
@@ -231,7 +236,7 @@ export default function BackgroundPage() {
               <span className="text-sm uppercase tracking-wide">Choose video</span>
               <input
                 type="file"
-                accept="video/mp4,video/webm,video/mov"
+                accept="video/mp4,video/webm,video/quicktime,.mov"
                 className="block w-full text-sm text-white file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-semibold file:bg-white file:text-black hover:file:bg-gray-200"
                 onChange={(e) => setFile(e.target.files?.[0] ?? null)}
               />
