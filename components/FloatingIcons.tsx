@@ -25,7 +25,7 @@ export const FloatingIcons = ({ animate = false }: { animate?: boolean }) => (
         }}
       >
         <Link
-          href="https://www.tiktok.com/@ryder"
+          href="https://www.tiktok.com/@0017_ryder"
           target="_blank"
           aria-label="TikTok"
         >
@@ -34,7 +34,7 @@ export const FloatingIcons = ({ animate = false }: { animate?: boolean }) => (
       </motion.div>
     ) : (
       <Link
-        href="https://www.tiktok.com/@ryder"
+        href="https://www.tiktok.com/@0017_ryder"
         target="_blank"
         aria-label="TikTok"
       >
