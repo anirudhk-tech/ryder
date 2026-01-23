@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useUiStore, BackgroundType, BackgroundConfig } from "@/lib/store/useUiStore";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { upload } from "@vercel/blob/client";
 
 export default function BackgroundPage() {
   const router = useRouter();
@@ -73,17 +74,48 @@ export default function BackgroundPage() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("type", activeType);
-
     try {
       setUploading(true);
       setMessage(null);
 
+      const lowerName = (file.name || "").toLowerCase();
+
+      const getPathname = () => {
+        if (activeType === "image") {
+          if (file.type === "image/jpeg" || lowerName.endsWith(".jpg") || lowerName.endsWith(".jpeg")) {
+            return "assets/background.jpg";
+          }
+          if (file.type === "image/webp" || lowerName.endsWith(".webp")) {
+            return "assets/background.webp";
+          }
+          if (file.type === "image/gif" || lowerName.endsWith(".gif")) {
+            return "assets/background.gif";
+          }
+          return "assets/background.png";
+        }
+
+        // video
+        if (file.type === "video/webm" || lowerName.endsWith(".webm")) {
+          return "assets/background.webm";
+        }
+        if (file.type === "video/quicktime" || lowerName.endsWith(".mov")) {
+          return "assets/background.mov";
+        }
+        return "assets/background.mp4";
+      };
+
+      // Upload directly from the browser to Vercel Blob (avoids Vercel Function body size limits).
+      const blob = await upload(getPathname(), file, {
+        access: "public",
+        handleUploadUrl: "/api/assets/background/upload",
+        clientPayload: JSON.stringify({ type: activeType }),
+      });
+
+      // Now persist the new background URL in config (small JSON request).
       const res = await fetch("/api/assets/background", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: activeType, value: blob.url }),
       });
 
       if (!res.ok) {

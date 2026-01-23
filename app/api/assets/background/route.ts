@@ -13,6 +13,22 @@ type BackgroundConfig = {
   value: string;
 };
 
+function isNonEmptyString(v: unknown): v is string {
+  return typeof v === "string" && v.trim().length > 0;
+}
+
+async function cleanupOldBackgroundFiles(keepUrl: string) {
+  try {
+    const { blobs } = await list({ prefix: BACKGROUND_PREFIX });
+    const oldBlobs = blobs.filter((b) => b.url !== keepUrl);
+    for (const blob of oldBlobs) {
+      await del(blob.url);
+    }
+  } catch {
+    // Cleanup failed, non-fatal
+  }
+}
+
 async function getConfig() {
   try {
     const { blobs } = await list({ prefix: CONFIG_PREFIX });
@@ -89,33 +105,64 @@ export async function POST(req: NextRequest) {
   try {
     const contentType = req.headers.get("content-type") || "";
 
-    // Handle JSON body for color backgrounds
+    // Handle JSON body for color backgrounds, or for setting image/video by URL
     if (contentType.includes("application/json")) {
       const body = await req.json();
       const { type, value } = body as { type: BackgroundType; value: string };
 
-      if (type !== "color" || !value) {
+      if (type === "color") {
+        if (!isNonEmptyString(value)) {
+          return NextResponse.json(
+            { error: "Invalid color background data" },
+            { status: 400 }
+          );
+        }
+
+        const config = await getConfig();
+        const newVersion = (config.backgroundVersion || 0) + 1;
+        const newBackground: BackgroundConfig = { type: "color", value };
+        const newConfig = {
+          ...config,
+          backgroundVersion: newVersion,
+          background: newBackground,
+        };
+        await saveConfig(newConfig);
+
+        return NextResponse.json({
+          ok: true,
+          version: newVersion,
+          background: newBackground,
+        });
+      }
+
+      if ((type === "image" || type === "video") && isNonEmptyString(value)) {
+        // If this URL points to a newly uploaded blob, keep it and clean up older ones
+        await cleanupOldBackgroundFiles(value);
+
+        const config = await getConfig();
+        const newVersion = (config.backgroundVersion || 0) + 1;
+        const newBackground: BackgroundConfig = { type, value };
+        const newConfig = {
+          ...config,
+          backgroundVersion: newVersion,
+          background: newBackground,
+        };
+        await saveConfig(newConfig);
+
+        return NextResponse.json({
+          ok: true,
+          version: newVersion,
+          background: newBackground,
+        });
+      }
+
+      // Anything else is invalid
+      if (!isNonEmptyString(value)) {
         return NextResponse.json(
-          { error: "Invalid color background data" },
+          { error: "Invalid background data" },
           { status: 400 }
         );
       }
-
-      const config = await getConfig();
-      const newVersion = (config.backgroundVersion || 0) + 1;
-      const newBackground: BackgroundConfig = { type: "color", value };
-      const newConfig = {
-        ...config,
-        backgroundVersion: newVersion,
-        background: newBackground,
-      };
-      await saveConfig(newConfig);
-
-      return NextResponse.json({
-        ok: true,
-        version: newVersion,
-        background: newBackground,
-      });
     }
 
     // Handle FormData for image/video uploads
@@ -157,15 +204,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Clean up old background files
-    try {
-      const { blobs } = await list({ prefix: BACKGROUND_PREFIX });
-      const oldBlobs = blobs.filter((b) => b.url !== url);
-      for (const blob of oldBlobs) {
-        await del(blob.url);
-      }
-    } catch {
-      // Cleanup failed, non-fatal
-    }
+    await cleanupOldBackgroundFiles(url);
 
     const config = await getConfig();
     const newVersion = (config.backgroundVersion || 0) + 1;
